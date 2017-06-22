@@ -50,7 +50,7 @@ def get_news():
 
 def get_random_quote():
     file = open('main/quote_list.txt')
-    quote_list = file.readlines()
+    quote_list = file.readlines().encode('utf-8')
     total = len(quote_list) - 1
     quote_text = quote_list[randint(0, total)]
     return quote_text.split(' -')
