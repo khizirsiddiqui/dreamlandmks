@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load base_extras %}
+
+{% block css_files %}
+<link rel="stylesheet" type="text/css" href="{% static "css/style.css" %}">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div id="header" class="text-center">
+	  <a href="{% url 'index' %}" id="logo">DreamLand</a>
+	  <ul id="menu">
+	    <li><a href="{% url 'index' %}"><span>Home</span></a></li>
+	    <li><a href="{% url 'tutorials' %}"><span>Tutorials</span></a></li>
+	    <li><a href="{% url 'articles' %}"><span>Articles</span></a></li>
+	    <li><a href="{% url 'discussions' %}"><span>Discussions</span></a></li>
+	    <li><a href="{% url 'about_me' %}"><span>About me</span></a></li>
+	  </ul>
+	</div>
+</div>
+
+<div class="row">
+	<div class="card-columns">
+		<div class="card text-center p-3" style="width: 29em;">
+		    <blockquote class="card-block card-blockquote">
+		      <h4 class="card-title quote">{{ word.txt|title }}</h4>
+		      <p class="card-text quote-text">{{ word.define }}</p>
+		      <p class="card-text">
+		      	<small class="text-muted">Example - {{ word.example }}</small>
+		      </p>
+		    </blockquote>
+	  	</div>
+	  	{% for article in article_list|slice:":3" %}
+		<div class="card" style="width: 29em;">
+			<div class="card-block">
+			    <div class="card-header">
+			    Tags:
+					{% for tag in article.tags.all %}
+					<a href="{% url 'article_by_tag' tag=tag.slug %}">
+						<span class="badge badge-default">{{ tag }}</span>
+					</a>
+					{% endfor %}
+			    </div>
+			    <hr>
+				<h3 class="card-title article-h3">
+				<a href="{{ article.get_absolute_url }}">
+					{{ article.get_title }}
+				</a>
+				</h3>
+				<h6 class="card-subtitle mb-2 text-muted">
+					<img src="{% get_user_profile_url user=article.author %}" class="img-thumbnail" alt="{{ article.author }}" width="70px" height="70px">
+					By: {{ article.author.get_full_name }}
+					<i class="float-right">{{ article.created_date|date:"d M Y" }}</i> 
+				</h6>
+
+				<p class="card-text content">{{ article.body|summarize|truncatewords:60 }}... 
+					<a href="{{ article.get_absolute_url }}" class="card-link">
+						<em>Read More.</em>
+					</a>
+				</p>
+			</div>
+			<div class="card-footer">
+	      		<small class="text-muted">Posted: {{ article.created_date|timesince }} ago</small>
+	    	</div>
+		</div>
+		{% endfor %}
+
+	  	{% for discuss in discus_list|slice:":3" %}
+		<div class="card" style="width: 29em;">
+			<div class="card-block">
+			    <div class="card-header">
+			    Tags:
+					{% for tag in discuss.tags.all %}
+					<a href="">
+						<span class="badge badge-default">{{ tag }}</span>
+					</a>
+					{% endfor %}
+			    </div>
+			    <hr>
+				<h3 class="card-title article-h3">
+				<a href="{% url 'single_discuss' slug=discuss.slug %}">
+					{{ discuss.get_title }}
+				</a>
+				</h3>
+				<h6 class="card-subtitle mb-2 text-muted">
+					<img src="{% get_user_profile_url user=discuss.creater %}" class="img-thumbnail" alt="{{ discuss.creater }}" width="70px" height="70px">
+					By: {{ discuss.creater.get_full_name }}
+					<i class="float-right">{{ discuss.created_date|date:"d M Y" }}</i> 
+				</h6>
+
+				<p class="card-text content">{{ discuss.get_comments.0|summarize|truncatewords:60 }}... 
+					<a href="{% url 'single_discuss' slug=discuss.slug %}" class="card-link">
+						<em>Read More.</em>
+					</a>
+				</p>
+			</div>
+			<div class="card-footer">
+	      		<small class="text-muted">Posted: {{ discuss.created_date|timesince }} ago</small>
+	    	</div>
+		</div>
+		{% endfor %}
+		<div class="card" style="width: 29em;">
+		    <div class="card-block">
+		      <h4 class="card-title">News Headlines</h4>
+		      <hr>
+		      <p class="card-text">
+		      
+		      <ol>
+		      	{% for news in newspaper|slice:":3" %}
+		      	<li>
+		      		<a href="{{ news.link }}" data-toggle="tooltip" data-html="true" title="{{ news.desc }}">{{ news.title }}</a>
+		      	</li>
+		      	{% empty %}
+				<div class="alert alert-warning alert-dismissible fade show" role="alert">
+				  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				    <span aria-hidden="true">&times;</span>
+				  </button>
+				  <strong>Holy guacamole!</strong>  None Available.
+				</div>
+		      	{% endfor %}
+		      </ol>
+		      </p>
+				<div class="card-footer">
+		      		<small class="text-muted">
+		      		<a class="card-link" href="https://www.ndtv.com/">
+		      			Source: NDTV News
+		      		</a>
+		      		</small>
+		    	</div>
+		    </div>
+	  	</div>
+		<div class="card-inverse card-primary text-center w-75">
+		    <blockquote class="card-block card-blockquote">
+		      <h3 class="card-title quote">Quote</h3>
+		      <p class="card-text">{{ quote}}</p>
+		      <p class="card-footer"><small>{{ q_author }}</small></p>
+		    </blockquote>
+	  	</div>
+	</div>
+</div>
+
+{% endblock %}

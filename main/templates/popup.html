@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"> 
+    <title>Dialog with page</title>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+    <script type="text/javascript">
+    $( document ).ready(function() {
+        $(".wizlink").click(function() {
+            opendialog(this.href, this.title);
+        });
+        $(".wizlink-b").click(function() {
+            opendialog("http://localhost:8000/organisations/person/add", "Person Add Test");
+        });
+
+        function opendialog(page, dialog_title) {
+            var viewportWidth = $(window).width();
+            var viewportHeight = $(window).height();
+
+            var $dialog = $('#somediv')
+            .html('<iframe style="border: 0px; " src="' + page + '" width="100%" height="100%"></iframe>')
+            .dialog({
+                title: dialog_title,
+                autoOpen: false,
+                dialogClass: 'dialog_fixed,ui-widget-header',
+                modal: true,
+                height: viewportHeight * 0.75,
+                minWidth: viewportWidth * 0.75,
+                minHeight: viewportHeight * 0.75,
+                draggable:true
+                /*close: function () { $(this).remove(); },*/
+                /*buttons: { "Ok": function () {         $(this).dialog("close"); } }*/
+            });
+            $dialog.dialog('open');
+            } 
+            console.log( "ready!" );
+    });
+
+    </script>
+  </head>
+  <body>
+    <div id="somediv">
+      Click me!
+        <a  href="#" title="Add Site">add - NOT THIS ONE</a>
+    </div>
+    <div>
+        <div id="wizlink">
+            <p>Version 5</p>
+            <a  class="wizlink-a" href="http://localhost:8000/organisations/person/add" title="Person Add">add (via anchor)</a>
+            <a  class="wizlink-b" href="#" title="Person Add">add (via div)</a>
+        </div>
+    </div>
+    <div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block css_files %}
+<link rel="stylesheet" type="text/css" href="{% static "css/menu.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "css/discuss_list.css" %}">
+<script type="text/javascript">
+$(document).ready(function(){
+    $('div[id^="showmore_"]').click(function(){
+        var moreContent = $(this).siblings('div[id^="more_content_"]');
+        $(this).toggle();
+        moreContent.fadeToggle();
+    });
+    $('div[id^="more_content_"]').click(function(){
+        var moreContent = $(this).siblings('div[id^="showmore_"]');
+        $(this).toggle();
+        moreContent.fadeToggle();
+    });
+});
+</script>
+{% endblock %}
+
+{% block menu %}
+<div class="row">
+{% include 'menu-snippet.html' %}
+</div>
+{% endblock %}
+{% block content %}
+<div class="row">
+	<div class="col">
+	<h1 class="display-2">Discussions</h2>
+	</div>
+		{% if tag %}
+	<div class="col">
+	<h3><small><small class="text-muted">Sorted by Tag: {{ tag }} ( {{ discuss_list|length }} )</small></small></h3>
+	</div>
+		{% endif %}
+	<div class="col">
+	<h3><small><small class="text-muted"><a href="{% url 'tag_list' %}">Tag List</a></small></small></h3>
+	</div>
+</div>
+<hr>
+<div class="row">
+{% if discuss_list %}
+	<div class="discuss-list">
+   {% for discuss in discuss_list %}
+   		<div class="discuss-body">
+			<div>
+				<h3 class="discuss-h" id="discuss">
+				<a href="{% url 'single_discuss' slug=discuss.slug %}">
+					{{ discuss.get_title }}
+				</a>
+				</h3>
+				<div class="discuss-stats float-right">
+				<small><em>
+					<span class="text-muted">Asked {{ discuss.created_date|timesince }} ago</span>
+				</em></small>
+				Tags:
+					{% for tag in discuss.tags.all %}
+					<a href="">
+						<span class="badge badge-default">{{ tag }}</span>
+					</a>
+					{% endfor %}
+				</div>
+				<div class="discuss-content text-muted">
+					{{ discuss.body|striptags }}
+				</div>
+				<hr>
+				<div class="comments"> Comments ({{discuss.get_comments|length}}):
+						{% for comment in discuss.get_comments|slice:":2" %}
+						<div class="single-comment">
+							<div id="showmore_{{ forloop.counter }}">
+								{{ comment.commenter.get_full_name }} - {{ comment.body|truncatewords:30|striptags|safe }}...
+								<em>Read More</em>
+							</div>
+							<div id="more_content_{{ forloop.counter }}" style="display: none;">
+								<b>{{ comment.commenter.get_full_name }} - </b>{{ comment.body|safe }}
+							</div>
+						</div>
+						{% endfor %}
+				</div>
+			</div>
+	    </div>
+	    {% if forloop.counter == discuss_list|length %}{% else%}<hr>{% endif %}
+		{% endfor %}
+	</div>
+{% else %}
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+	    <span aria-hidden="true">&times;</span>
+	  </button>
+	  <strong>Holy guacamole!</strong>  None Available, or maybe, you should check what you did!
+	</div>
+{% endif %}
+</div>
+<div class="row">
+{% if discuss_list.has_other_pages %}
+	<nav aria-label="Page navigation example">
+  		<ul class="pagination justify-content-center">
+  		 	{% if discuss_list.has_previous %}
+    		<li class="page-item">
+      			<a class="page-link" href="?page={{ discuss_list.previous_page_number }}" tabindex="-1">Previous</a>
+    		</li>
+    		{% else %}
+    		<li class="page-item disabled">
+      			<a class="page-link" tabindex="-1">Previous</a>
+    		</li>
+			{% endif %}
+
+    		{% for i in discuss_list.paginator.page_range %}
+    			
+    		<li class="page-item {% if discuss_list.number == i %}active{% endif %} ">
+    			<a class="page-link" href="?page={{ i }}">
+    				{{ i }}
+    			</a>
+    		</li>
+
+    		{% endfor %}
+			
+			{% if discuss_list.has_next %}
+    		<li class="page-item">
+      			<a class="page-link" href="?page={{ discuss_list.next_page_number }}">Next</a>
+    		</li>
+    		{% else %}
+    		<li class="page-item disabled">
+      			<a class="page-link">Next</a>
+    		</li>
+    		{% endif %}
+  		</ul>
+	</nav>
+{% endif %}
+</div>
+{% endblock %}

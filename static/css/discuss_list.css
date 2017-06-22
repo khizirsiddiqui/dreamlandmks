@@ -1,0 +1,15 @@
+.discuss-body
+{
+    padding: 12px;
+
+    border-radius: 10px;
+    background: white;
+    -webkit-box-shadow: 10px 10px 44px #706e65;
+       -moz-box-shadow: 10px 10px 44px #706e65;
+            box-shadow: 10px 10px 44px #706e65;
+}
+
+.single-comment
+{
+    margin-left: 10px;
+}

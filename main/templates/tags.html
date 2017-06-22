@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block css_files %}
+<link rel="stylesheet" type="text/css" href="{% static "css/menu.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "css/articles.css" %}">
+{% endblock %}
+
+{% block menu %}
+<div class="row">
+{% include 'menu-snippet.html' %}
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+	<div class="col">
+	<h1 class="display-2">Tag List</h2>
+	</div>
+</div>
+<hr>
+<div class="row">
+	{% if tag_list %}
+		<ol class="breadcrumb">
+	   {% for tag in tag_list %}
+			<li class="breadcrumb-item">
+				<a href="{% url 'article_by_tag' tag=tag.slug %}">
+					{{ tag }}
+				</a>
+			</li>
+			{% endfor %}
+		</ol>
+	{% else %}
+		<div class="alert alert-warning alert-dismissible fade show" role="alert">
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		    <span aria-hidden="true">&times;</span>
+		  </button>
+		  <strong>Holy guacamole!</strong>  None Available.
+		</div>
+	{% endif %}
+</div>
+{% endblock %}

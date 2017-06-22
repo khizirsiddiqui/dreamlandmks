@@ -1,0 +1,12 @@
+{% load base_extras %}
+
+<div class="container">
+<ul id="nav" data-spy="affix" data-offset-top="50">
+	<li class="{% navactive request 'index' %}"><a href="{% url 'index' %}">DreamLand</a></li>
+	<li class="{% navactive request 'tutorials' %} float-right "><a href="{% url 'tutorials' %}">Tutorials</a></li>
+	<li class="{% navactive request 'articles' %} float-right"><a href="{% url 'articles' %}">Articles</a></li>
+	<li class="{% navactive request 'discussions' %} float-right"><a href="{% url 'discussions' %}">Discussions</a></li>
+	<li class="{% navactive request 'about_me' %} float-right"><a href="{% url 'about_me' %}">About Me</a></li>
+</ul>
+</div>
+</div>

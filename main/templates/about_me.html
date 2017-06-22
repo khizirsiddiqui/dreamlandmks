@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block css_files %}
+<link rel="stylesheet" type="text/css" href="{% static "css/menu.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "css/about_me.css" %}">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+{% include 'menu-snippet.html' %}
+</div>
+<div class="row">
+	<div class="col-4">
+		<div class="card">
+		  <img class="card-img-top" src="..." alt="Card image cap">
+		  <div class="card-block">
+		    <h4 class="card-title">Mohd Khizir Siddiqui</h4>
+		    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+		    <a href="#" class="btn btn-primary">Go somewhere</a>
+		  </div>
+		</div>
+    </div>
+	<div class="col-8">
+		<a href="http://www.tcdavbabrala.org/">Tata Chem DAV Public School</a>
+		<div class="writeOver">
+			Some Text
+		</div>
+		<address>
+			C-31, Phase-1,
+			Tata Chemicals Ltd Township,
+			Babrala I.A.,
+			Dist: Sambhal
+			Uttar Pradesh,
+			India
+		</address>
+	</div>
+</div>
+<div class="row"></div>
+
+{% endblock %}

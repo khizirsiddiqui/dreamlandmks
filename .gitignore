@@ -1,0 +1,5 @@
+myvenv
+*.pyc
+staticfiles
+.env
+db.sqlite3

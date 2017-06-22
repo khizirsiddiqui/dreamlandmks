@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load base_extras %}
+{% block css_files %}
+<link rel="stylesheet" type="text/css" href="{% static "css/menu.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "css/discuss.css" %}">
+<script type="text/javascript">
+$(document).ready(function(){
+    $('div[id^="showmore_"]').click(function(){
+        var moreContent = $(this).siblings('div[id^="more_content_"]');
+        $(this).toggle();
+        moreContent.fadeToggle();
+    });
+    $('div[id^="more_content_"]').click(function(){
+        var moreContent = $(this).siblings('div[id^="showmore_"]');
+        $(this).toggle();
+        moreContent.fadeToggle();
+    });
+});
+</script>
+<script type="text/javascript">
+$(document).ready(function(event) {
+	$("#comment-form").submit(function(event) {
+	    event.stopPropagation();
+	    var myform = $("#comment-form");
+	    var data= $(this).serialize();
+	    alert(data);
+	    $.ajax({
+		    data: $(myform).serialize(),
+		            type: "POST",
+		            url: $(myform).attr('action'),
+		            success: function(data){
+		                console.log(data);
+		                $("#ajax_div").html(data);
+		                $("id_body").val(' ');
+		            },
+		            error: function(e){
+		                console.log(e);
+	       	        }
+	    });
+	});
+});
+</script>
+{% endblock %}
+
+{% block menu %}
+<div class="row">
+{% include 'menu-snippet.html' %}
+</div>
+{% endblock %}
+{% block content %}
+{% if discuss %}
+<div>
+Tags:
+	{% for tag in discuss.tags.all %}
+		<span class="badge bg-faded text-primary">{{ tag }}</span>
+	{% endfor %}
+</div>
+<div class="row">
+	<h1 class="display-3">{{ discuss.get_title }}</h1>
+</div>
+<hr>
+<div class="row">
+<p class="text-muted">
+	{{ discuss.body|safe }}
+</p>
+</div>
+<div class="row">
+ <h5>
+ Comments ({{discuss.get_comments|length}}):
+ </h5>
+	<div class="comments">
+			{% for comment in discuss.get_comments %}
+			<div class="single-comment">
+				<!---#################### - BRIEF DETAILS - ################################ -->
+				<div id="showmore_{{ forloop.counter }}" class="container">
+				<div class="row">
+				<div class="col-1 text-center">
+					{{ comment.commenter.get_full_name }}
+				</div>
+				<div class="col-11">
+					{{ comment.body|truncatewords:50|striptags|safe }}... <em>Read More</em>
+				</div>
+				</div>
+				</div>
+				<!---#################### - COMPLETE DETAILS - ################################ -->
+				<div id="more_content_{{ forloop.counter }}" style="display: none;" class="container">
+					<div class="row">
+					<!---#################### - STATS - ################################ -->
+					<div class="comment-stats col-1">
+						<img src="{% static "img/up.png" %}" height="30px" data-toggle="tooltip" data-html="true" title="<b>Upvote{{comment.upvotes|pluralize}}</b> | {{ comment.upvotes }}" data-placement="top">
+						<br>
+						<img src="{% static "img/down.png" %}" height="30px" data-toggle="tooltip" data-html="true" title="<b>Downvote{{ comment.downvotes|pluralize }}</b> | -{{ comment.downvotes }}" data-placement="bottom">
+						
+						<hr>
+						<small>Commented {{ comment.created_date|timesince }} ago</small>
+					</div>
+					<!---#################### - COMMENT BODY - ################################ -->
+					<div class="comment-body col-11">
+					  <img src="{% get_user_image_url user=comment.commenter %}" class="img-fluid rounded-circle" alt="{{ comment.commenter }}" width="70px" height="70px" align="left">
+					  <em><b>{{ comment.commenter.get_full_name }}</b></em>
+					  <hr>
+					  <div class="comment-content">
+					  {{ comment.body|safe }}
+					  </div>
+					</div>
+					</div>
+					<!---#################### - SubComments - ################################ -->
+					{% for subcomment in comment.get_subcomments %}
+						<b>{{ subcomment.commenter.get_full_name }}</b> - {{ subcomment.body|safe }}
+					{% endfor %}
+				</div>
+			</div>
+			{% empty %}
+			<div class="alert alert-warning alert-dismissible fade show" role="alert">
+			  	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			    	<span aria-hidden="true">&times;</span>
+			  	</button>
+			  	<strong>Holy guacamole!</strong>  No one Commented Yet!.
+			</div>
+			{% endfor %}
+
+			{% if comment_form %}
+			<div class="single-comment container">
+				<div class="row">
+				<div class="col-1 text-center">
+					<img src="{% get_user_image_url user=request.user %}" class="img-thumbnail" alt="{{ user }}" width="70px" height="70px">
+					{{ user.get_full_name }}
+				</div>
+				<div class="col-11">
+				<!---#################### - NEW COMMENT - ################################ -->
+				<form class="form-inline" action="{{ request.path }}" method="POST" id="comment_form">
+					{% csrf_token %}
+					{{ comment_form.as_p }}
+					<button type="submit" class="btn btn-success" style="margin-left:10px;">Comment</button>
+				</form>
+				</div>
+				</div>
+			</div>
+			{% else %}
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			  Log In to Comment
+			</div>
+			{% endif %}
+		</div>
+	</div>
+</div>
+{% else %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <strong>Holy guacamole!</strong>  None Available.
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,10 @@
+.writeOver{
+	width: 150px;
+	height: 150px;
+	border-color: black;
+	border-width:4px;
+	border-radius: 50%;
+	text-align: center;
+	padding: 50px;
+	background-image: url('/static/img/bg.png')
+}
